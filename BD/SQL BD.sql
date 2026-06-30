@@ -130,7 +130,7 @@ CREATE TABLE Profesor (
     Email NVARCHAR(100) NOT NULL UNIQUE,
     Especialidad NVARCHAR(100) NOT NULL,
     Activo BIT DEFAULT 1 NOT NULL,
-    -- Campos de Auditoría
+  
     FechaCreacion DATETIME DEFAULT GETDATE(),
     UsuarioCreacion NVARCHAR(50)
 );
@@ -142,7 +142,7 @@ CREATE TABLE Estudiante (
     Email NVARCHAR(100) NOT NULL UNIQUE,
     Telefono NVARCHAR(20),
     Activo BIT DEFAULT 1 NOT NULL,
-    -- Campos de Auditoría
+ 
     FechaCreacion DATETIME DEFAULT GETDATE(),
     UsuarioCreacion NVARCHAR(50)
 );
@@ -200,7 +200,7 @@ BEGIN
 END;
 GO
 
--- OBTENER POR ID (Solo activos)
+-- OBTENER POR ID 
 CREATE PROCEDURE sp_Estudiante_ObtenerPorId
     @IdEstudiante INT
 AS
@@ -211,7 +211,7 @@ BEGIN
 END;
 GO
 
--- LISTAR TODOS (Solo activos)
+-- LISTAR TODOS 
 CREATE PROCEDURE sp_Estudiante_Listar
 AS
 BEGIN
