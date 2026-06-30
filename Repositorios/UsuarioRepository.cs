@@ -7,69 +7,78 @@ namespace EduDataApi.Repositorios
     public class UsuarioRepository
     {
         private readonly AppDbContext _context;
+
         public UsuarioRepository(AppDbContext context)
         {
             _context = context;
         }
-        public async Task CrearUsuario(Usuario Usuario)
+
+        // Crear usuario
+        public async Task CrearUsuario(Usuario usuario)
         {
             var parameters = new[]
             {
-            new SqlParameter("@Apodo", Usuario.Apodo),
-            new SqlParameter("@Correo", Usuario.Correo),
-            new SqlParameter("@Clave", Usuario.Clave),
-            new SqlParameter("@Estado", Usuario.Estado),
-            new SqlParameter("@Rol", Usuario.Rol),
-            new SqlParameter("@Creado_Por", Usuario.Creado_Por)
-            
-        }:
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_CrearUsuario @Apodo, @Correo," +
-                " @Clave, @Estado, @Rol, @Creado_Por", parameters);
+                new SqlParameter("@Apodo", usuario.Apodo),
+                new SqlParameter("@Correo", usuario.Correo),
+                new SqlParameter("@Clave", usuario.Clave),
+                new SqlParameter("@Estado", usuario.Estado),
+                new SqlParameter("@Rol", usuario.Rol),
+                new SqlParameter("@Creado_Por", usuario.Creado_Por)
+            };
+
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC sp_CrearUsuario @Apodo, @Correo, @Clave, @Estado, @Rol, @Creado_Por",
+                parameters
+            );
         }
 
-
-        public async Task ModificarUsuario(Usuario Usuario)
+        // Modificar usuario
+        public async Task ModificarUsuario(Usuario usuario)
         {
             var parameters = new[]
             {
-            new SqlParameter("@Id", Usuario.Id),
-            new SqlParameter("@Apodo", Usuario.Apodo),
-            new SqlParameter("@Correo", Usuario.Correo),
-            new SqlParameter("@Estado", Usuario.Estado),
-            new SqlParameter("@Rol", Usuario.Rol),
-            new SqlParameter("@Modificado_Por", Usuario.Modificado_Por)
+                new SqlParameter("@Id", usuario.Id),
+                new SqlParameter("@Apodo", usuario.Apodo),
+                new SqlParameter("@Correo", usuario.Correo),
+                new SqlParameter("@Estado", usuario.Estado),
+                new SqlParameter("@Rol", usuario.Rol),
+                new SqlParameter("@Modificado_Por", usuario.Modificado_Por)
+            };
 
-        }:
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_ModificarUsuario @Id, @Apodo, @Correo," +
-                " @Estado, @Rol, @Modificado_Por", parameters);
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC sp_ModificarUsuario @Id, @Apodo, @Correo, @Estado, @Rol, @Modificado_Por",
+                parameters
+            );
         }
 
-
+        // Eliminar usuario
         public async Task EliminarUsuario(int id)
         {
             var parameter = new SqlParameter("@Id", id);
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_ElimianrUsuario @Id", parameter);
+
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC sp_EliminarUsuario @Id",
+                parameter
+            );
         }
 
-
-        public async Task LeerUsuario(Usuario Usuario)
+        // Obtener todos los usuarios
+        public async Task<List<Usuario>> LeerUsuarios()
         {
-            var parameters = new[]
-            {
-            new SqlParameter("@Id", Usuario.Id),
-            new SqlParameter("@Apodo", Usuario.Apodo),
-            new SqlParameter("@Correo", Usuario.Correo),
-            new SqlParameter("@Estado", Usuario.Estado),
-            new SqlParameter("@Rol", Usuario.Rol),
-
-        }:
-            await _context.Database.ExecuteSqlRawAsync("EXEC sp_LeerUsuario @Id, @Apodo, @Correo," +
-                " @Estado, @Rol", parameters);
+            return await _context.Usuarios
+                .FromSqlRaw("EXEC sp_LeerUsuarios")
+                .ToListAsync();
         }
 
-        internal async Task BuscarUsuarioPorId(int id)
+        // Obtener usuario por ID
+        public async Task<Usuario?> BuscarUsuarioPorId(int id)
         {
-            throw new NotImplementedException();
+            var parameter = new SqlParameter("@Id", id);
+
+            return await _context.Usuarios
+                .FromSqlRaw("EXEC sp_BuscarUsuarioPorId @Id", parameter)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
         }
     }
 }
